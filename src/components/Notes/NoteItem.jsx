@@ -1,4 +1,4 @@
-import { Check, Copy, Edit2, MoreVertical, Trash2 } from "lucide-react";
+import { Check, Copy, Download, Edit2, MoreVertical, Trash2 } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -35,6 +35,34 @@ function NoteItem({ note, onEdit, onDelete }) {
     } catch (err) {
       console.log(err);
       toast.error("Copy failed");
+    }
+  };
+
+  const handleDownload = () => {
+    try {
+      const fileContent = `${note.title}\n${"=".repeat(note.title.length)}\n\n${note.content}`;
+      const blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement("a");
+      link.href = url;
+      
+      const sanitizedTitle = note.title
+        .replace(/[^a-z0-9]/gi, "_")
+        .replace(/_+/g, "_")
+        .substring(0, 50);
+      link.download = `${sanitizedTitle || "note"}.txt`;
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast.success("Downloaded");
+    } catch (err) {
+      console.log(err);
+      toast.error("Download failed");
     }
   };
 
@@ -90,6 +118,17 @@ function NoteItem({ note, onEdit, onDelete }) {
             >
               {copied ? <Check size={16} /> : <Copy size={16} />}
               Copy
+            </button>
+
+            <button
+              onClick={() => {
+                handleDownload();
+                setShowActions(false);
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-dark-200 transition"
+            >
+              <Download size={16} />
+              Download
             </button>
 
             <button
