@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark-50: #f7f7f8;
+  --color-dark-100: #ececf1;
+  --color-dark-200: #d9d9e3;
+  --color-dark-300: #c5c5d2;
+  --color-dark-400: #acacbe;
+  --color-dark-500: #8e8ea0;
+  --color-dark-600: #565869;
+  --color-dark-700: #40414f;
+  --color-dark-800: #343541;
+  --color-dark-900: #202123;
+  --color-dark-950: #0d0d0f;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--color-dark-900);
+  color: var(--color-dark-100);
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-dark-800);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-dark-600);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-dark-500);
+}
+
+/* Note editor styles */
+.note-editor {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+}
+
+.line-number {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Calculator button styles */
+.calc-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 150ms;
+}
+
+.calc-btn:active {
+  transform: scale(0.95);
+}
+
+.calc-btn-number {
+  background-color: var(--color-dark-700);
+  color: white;
+}
+
+.calc-btn-number:hover {
+  background-color: var(--color-dark-600);
+}
+
+.calc-btn-operator {
+  background-color: #d97706;
+  color: white;
+}
+
+.calc-btn-operator:hover {
+  background-color: #f59e0b;
+}
+
+.calc-btn-function {
+  background-color: var(--color-dark-600);
+  color: var(--color-dark-200);
+}
+
+.calc-btn-function:hover {
+  background-color: var(--color-dark-500);
+}
+
+.calc-btn-scientific {
+  background-color: var(--color-dark-800);
+  color: var(--color-dark-300);
+  font-size: 0.875rem;
+}
+
+.calc-btn-scientific:hover {
+  background-color: var(--color-dark-700);
+}
+
+/* Toast customization */
+.toast-custom {
+  background: var(--color-dark-800) !important;
+  color: var(--color-dark-100) !important;
+  border: 1px solid var(--color-dark-600) !important;
+}
