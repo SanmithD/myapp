@@ -28,22 +28,28 @@ export default defineConfig({
         theme_color: "#000000",
 
         icons: [
-          {
-            src: "log.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "logo.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "main-logo.png",
-            sizes: "512x512",
-            type: "image/png",
-          },
-        ],
+  {
+    src: "main-logo.png",
+    sizes: "512x512",
+    type: "image/png",
+  },
+  {
+    src: "main-logo.png",
+    sizes: "192x192",
+    type: "image/png",
+  },
+  {
+    src: "logo.png",
+    sizes: "192x192",
+    type: "image/png",
+  },
+  {
+    src: "log.png",
+    sizes: "192x192",
+    type: "image/png",
+  },
+],
+
       },
 
       workbox: {
