@@ -30,12 +30,12 @@ export default defineConfig({
 
         icons: [
           {
-            src: "voice-logo.png",
-            sizes: "192x192",
+            src: "main-logo.png",
+            sizes: "512x512",
             type: "image/png",
           },
           {
-            src: "log.png",
+            src: "main-logo.png",
             sizes: "192x192",
             type: "image/png",
           },
@@ -45,8 +45,13 @@ export default defineConfig({
             type: "image/png",
           },
           {
-            src: "main-logo.png",
-            sizes: "512x512",
+            src: "log.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "voice-logo.png",
+            sizes: "192x192",
             type: "image/png",
           },
         ],
