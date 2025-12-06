@@ -3,6 +3,7 @@ import CalculatorApp from './components/Calculator/CalculatorApp'
 import Home from './components/Home'
 import Layout from './components/Layout'
 import NotesApp from './components/Notes/NotesApp'
+import VoiceApp from './components/Voice/VoiceApp'
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/notes" element={<NotesApp />} />
         <Route path="/calculator" element={<CalculatorApp />} />
+        <Route path="/voice" element={<VoiceApp />} />
       </Routes>
     </Layout>
   )

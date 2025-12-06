@@ -7,11 +7,11 @@ function Layout({ children }) {
   const isHome = location.pathname === '/'
 
   return (
-    <div className="min-h-screen bg-dark-900 text-dark-100 my-4">
+    <div className="min-h-screen bg-dark-900 text-dark-100">
       {/* Header */}
       {!isHome && (
-        <header className="sticky top-0 z-50 h-10 flex items-center bg-dark-800/95 backdrop-blur border-b border-dark-700">
-          <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-4">
+        <header className="fixed w-full justify-between top-0 z-50 h-12 flex items-center bg-dark-800/95 backdrop-blur border-b border-dark-700">
+          <div className="w-full mx-auto p-2 py-3 flex justify-between items-center gap-4">
             <button
               onClick={() => navigate('/')}
               className="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors"

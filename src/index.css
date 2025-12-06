@@ -14,17 +14,11 @@
   --color-dark-950: #0d0d0f;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--color-dark-900);
   color: var(--color-dark-100);
-  min-height: 100vh;
+  /* min-height: 100vh; */
 }
 
 /* Custom scrollbar */

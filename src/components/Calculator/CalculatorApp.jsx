@@ -177,9 +177,9 @@ function CalculatorApp() {
   }, [setHistory]);
 
   return (
-    <div className="h-screen flex flex-col px-4 sm:px-6 pt-4 pb-6">
+    <div className="h-screen flex flex-col pt-14 pb-6">
       {/* Display - Fixed at top */}
-      <div className="mb-4 fixed w-full flex flex-col gap-2">
+      <div className="fixed w-full flex flex-col gap-2">
         <Display expression={expression} result={display} />
         {/* History Toggle */}
         <button

@@ -83,7 +83,7 @@ function NotesApp() {
   return (
     <div className="min-h-screen p-4">
       {/* Search Bar */}
-      <div className="mb-4 my-3">
+      <div className="mb-4 pt-6 my-3">
         <div className="relative">
           {/* <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400" /> */}
           <input
