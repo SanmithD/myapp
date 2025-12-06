@@ -16,6 +16,7 @@ export default defineConfig({
         "log.png",
         "logo.png",
         "main-logo.png",
+        "voice-logo.png"
       ],
 
       manifest: {
@@ -28,6 +29,11 @@ export default defineConfig({
         theme_color: "#000000",
 
         icons: [
+          {
+            src: "voice-logo.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
           {
             src: "log.png",
             sizes: "192x192",
