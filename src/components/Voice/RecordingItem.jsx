@@ -11,21 +11,18 @@ function RecordingItem({ recording, onDelete, onRename }) {
   
   const audioRef = useRef(null)
 
-  // Format duration
   const formatDuration = (seconds) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
 
-  // Format file size
   const formatSize = (bytes) => {
     if (bytes < 1024) return bytes + ' B'
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
   }
 
-  // Format date
   const formatDate = (dateString) => {
     const date = new Date(dateString)
     const now = new Date()
@@ -38,12 +35,10 @@ function RecordingItem({ recording, onDelete, onRename }) {
       return 'Yesterday'
     } else if (days < 7) {
       return date.toLocaleDateString([], { weekday: 'short' })
-    } else {
-      return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
     }
+    return date.toLocaleDateString([], { month: 'short', day: 'numeric' })
   }
 
-  // Play/Pause audio
   const togglePlay = () => {
     if (!audioRef.current) {
       audioRef.current = new Audio(recording.audioData)
@@ -64,12 +59,9 @@ function RecordingItem({ recording, onDelete, onRename }) {
     setIsPlaying(!isPlaying)
   }
 
-  // Download recording
   const handleDownload = () => {
     try {
-      // Convert base64 to blob
       const byteString = atob(recording.audioData.split(',')[1])
-      const mimeType = recording.audioData.split(',')[0].split(':')[1].split(';')[0]
       const ab = new ArrayBuffer(byteString.length)
       const ia = new Uint8Array(ab)
       
@@ -77,19 +69,18 @@ function RecordingItem({ recording, onDelete, onRename }) {
         ia[i] = byteString.charCodeAt(i)
       }
       
-      const blob = new Blob([ab], { type: mimeType })
+      const blob = new Blob([ab], { type: 'audio/webm' })
       const url = URL.createObjectURL(blob)
       
       const link = document.createElement('a')
       link.href = url
       
-      const sanitizedName = recording.name
+      const fileName = recording.name
         .replace(/[^a-z0-9]/gi, '_')
         .replace(/_+/g, '_')
-        .substring(0, 50)
+        .substring(0, 50) || 'recording'
       
-      // Use .webm extension as that's the actual format
-      link.download = `${sanitizedName || 'recording'}.webm`
+      link.download = `${fileName}.webm`
       
       document.body.appendChild(link)
       link.click()
@@ -99,12 +90,11 @@ function RecordingItem({ recording, onDelete, onRename }) {
       toast.success('Downloaded')
       setShowActions(false)
     } catch (err) {
-      console.error('Download failed:', err)
+      console.error(err)
       toast.error('Download failed')
     }
   }
 
-  // Save renamed recording
   const handleSaveRename = () => {
     if (editName.trim()) {
       onRename(editName)
@@ -112,15 +102,8 @@ function RecordingItem({ recording, onDelete, onRename }) {
     }
   }
 
-  // Cancel editing
-  const handleCancelEdit = () => {
-    setEditName(recording.name)
-    setIsEditing(false)
-  }
-
   return (
     <div className="relative bg-dark-800 rounded-xl border border-dark-700 hover:border-dark-600 transition-colors p-4">
-      {/* Main Content */}
       <div className="flex items-center gap-4">
         {/* Play Button */}
         <button
@@ -146,26 +129,23 @@ function RecordingItem({ recording, onDelete, onRename }) {
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleSaveRename()
-                  if (e.key === 'Escape') handleCancelEdit()
+                  if (e.key === 'Escape') {
+                    setEditName(recording.name)
+                    setIsEditing(false)
+                  }
                 }}
               />
-              <button
-                onClick={handleSaveRename}
-                className="p-1 text-green-400 hover:text-green-300"
-              >
+              <button onClick={handleSaveRename} className="p-1 text-green-400 hover:text-green-300">
                 <Check size={18} />
               </button>
-              <button
-                onClick={handleCancelEdit}
-                className="p-1 text-dark-400 hover:text-white"
-              >
+              <button onClick={() => { setEditName(recording.name); setIsEditing(false) }} className="p-1 text-dark-400 hover:text-white">
                 <X size={18} />
               </button>
             </div>
           ) : (
             <>
               <h3 className="font-semibold text-white truncate">{recording.name}</h3>
-              <div className="flex items-center gap-3 text-xs text-dark-400 mt-1">
+              <div className="flex items-center gap-2 text-xs text-dark-400 mt-1 flex-wrap">
                 <span>{formatDuration(isPlaying ? currentTime : recording.duration)}</span>
                 <span>•</span>
                 <span>{formatSize(recording.size)}</span>
@@ -176,22 +156,22 @@ function RecordingItem({ recording, onDelete, onRename }) {
           )}
         </div>
 
-        {/* Menu Button */}
+        {/* Menu */}
         {!isEditing && (
           <button
             onClick={() => setShowActions(!showActions)}
-            className="p-2 rounded-lg hover:bg-dark-700 text-dark-400 hover:text-white transition-colors"
+            className="p-2 rounded-lg hover:bg-dark-700 text-dark-400 hover:text-white"
           >
             <MoreVertical size={20} />
           </button>
         )}
       </div>
 
-      {/* Progress Bar (when playing) */}
+      {/* Progress Bar */}
       {isPlaying && (
         <div className="mt-3 h-1 bg-dark-700 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-rose-500 transition-all duration-200"
+            className="h-full bg-rose-500 transition-all"
             style={{ width: `${(currentTime / recording.duration) * 100}%` }}
           />
         </div>
@@ -200,33 +180,24 @@ function RecordingItem({ recording, onDelete, onRename }) {
       {/* Action Menu */}
       {showActions && (
         <>
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setShowActions(false)}
-          />
-          <div className="absolute top-12 right-3 z-20 bg-dark-700 rounded-xl border border-dark-600 shadow-xl overflow-hidden min-w-[160px]">
+          <div className="fixed inset-0 z-10" onClick={() => setShowActions(false)} />
+          <div className="absolute top-12 right-3 z-20 bg-dark-700 rounded-xl border border-dark-600 shadow-xl overflow-hidden min-w-[150px]">
             <button
-              onClick={() => {
-                handleDownload()
-              }}
-              className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-dark-200 transition"
+              onClick={handleDownload}
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-dark-200"
             >
               <Download size={16} />
               Download
             </button>
             <button
-              onClick={() => {
-                setIsEditing(true)
-                setShowActions(false)
-              }}
-              className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-dark-200 transition"
+              onClick={() => { setIsEditing(true); setShowActions(false) }}
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-dark-200"
             >
               <Edit2 size={16} />
               Rename
             </button>
             <button
               onClick={() => {
-                // Stop playing if currently playing
                 if (audioRef.current) {
                   audioRef.current.pause()
                   audioRef.current = null
@@ -234,7 +205,7 @@ function RecordingItem({ recording, onDelete, onRename }) {
                 onDelete()
                 setShowActions(false)
               }}
-              className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-red-400 transition"
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-red-400"
             >
               <Trash2 size={16} />
               Delete

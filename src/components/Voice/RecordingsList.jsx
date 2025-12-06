@@ -8,10 +8,6 @@ function RecordingsList({ recordings, onDelete, onRename }) {
   const visibleRecordings = recordings.slice(0, visibleCount)
   const hasMore = recordings.length > visibleCount
 
-  const loadMore = () => {
-    setVisibleCount(prev => prev + 10)
-  }
-
   if (recordings.length === 0) {
     return (
       <div className="text-center py-16">
@@ -33,14 +29,13 @@ function RecordingsList({ recordings, onDelete, onRename }) {
         />
       ))}
 
-      {/* Load More Button */}
       {hasMore && (
         <button
-          onClick={loadMore}
+          onClick={() => setVisibleCount(prev => prev + 10)}
           className="w-full py-3 flex items-center justify-center gap-2 bg-dark-800 text-dark-300 rounded-xl hover:bg-dark-700 hover:text-white transition-colors"
         >
           <ChevronDown size={18} />
-          Load More ({recordings.length - visibleCount} remaining)
+          Load More ({recordings.length - visibleCount} more)
         </button>
       )}
     </div>

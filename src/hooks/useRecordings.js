@@ -1,11 +1,32 @@
-import { useMemo, useState } from 'react'
-import useLocalStorage from './useLocalStorage'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+    deleteAllRecordings as deleteAllFromDB,
+    deleteRecording as deleteFromDB,
+    getAllRecordings,
+    saveRecording,
+    updateRecording
+} from '../utils/audioStorage'
 
 function useRecordings() {
-  const [recordings, setRecordings] = useLocalStorage('myapp-recordings', [])
+  const [recordings, setRecordings] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Filter recordings based on search
+  // Load recordings on mount
+  useEffect(() => {
+    const loadRecordings = async () => {
+      try {
+        const data = await getAllRecordings()
+        setRecordings(data)
+      } catch (error) {
+        console.error('Failed to load recordings:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    loadRecordings()
+  }, [])
+
   const filteredRecordings = useMemo(() => {
     if (!searchQuery.trim()) return recordings
     const query = searchQuery.toLowerCase()
@@ -14,44 +35,62 @@ function useRecordings() {
     )
   }, [recordings, searchQuery])
 
-  // Add new recording
-  const addRecording = (name, audioBlob, duration) => {
+  const addRecording = useCallback(async (name, audioBlob, duration) => {
     return new Promise((resolve) => {
       const reader = new FileReader()
-      reader.onloadend = () => {
+      reader.onloadend = async () => {
         const newRecording = {
           id: Date.now(),
           name: name.trim() || `Recording ${recordings.length + 1}`,
-          audioData: reader.result, // Base64 encoded audio
+          audioData: reader.result,
           duration,
           createdAt: new Date().toISOString(),
           size: audioBlob.size
         }
-        setRecordings(prev => [newRecording, ...prev])
-        resolve(newRecording)
+        
+        try {
+          await saveRecording(newRecording)
+          setRecordings(prev => [newRecording, ...prev])
+          resolve(newRecording)
+        } catch (error) {
+          console.error('Failed to save recording:', error)
+          resolve(null)
+        }
       }
       reader.readAsDataURL(audioBlob)
     })
-  }
+  }, [recordings.length])
 
-  // Delete single recording
-  const deleteRecording = (id) => {
-    setRecordings(prev => prev.filter(recording => recording.id !== id))
-  }
+  const deleteRecording = useCallback(async (id) => {
+    try {
+      await deleteFromDB(id)
+      setRecordings(prev => prev.filter(recording => recording.id !== id))
+    } catch (error) {
+      console.error('Failed to delete recording:', error)
+    }
+  }, [])
 
-  // Delete all recordings
-  const deleteAllRecordings = () => {
-    setRecordings([])
-  }
+  const deleteAllRecordings = useCallback(async () => {
+    try {
+      await deleteAllFromDB()
+      setRecordings([])
+    } catch (error) {
+      console.error('Failed to delete all recordings:', error)
+    }
+  }, [])
 
-  // Rename recording
-  const renameRecording = (id, newName) => {
-    setRecordings(prev => prev.map(recording =>
-      recording.id === id
-        ? { ...recording, name: newName.trim() || recording.name }
-        : recording
-    ))
-  }
+  const renameRecording = useCallback(async (id, newName) => {
+    const recording = recordings.find(r => r.id === id)
+    if (recording) {
+      const updated = { ...recording, name: newName.trim() || recording.name }
+      try {
+        await updateRecording(updated)
+        setRecordings(prev => prev.map(r => r.id === id ? updated : r))
+      } catch (error) {
+        console.error('Failed to rename recording:', error)
+      }
+    }
+  }, [recordings])
 
   return {
     recordings: filteredRecordings,
@@ -61,7 +100,8 @@ function useRecordings() {
     addRecording,
     deleteRecording,
     deleteAllRecordings,
-    renameRecording
+    renameRecording,
+    isLoading
   }
 }
 

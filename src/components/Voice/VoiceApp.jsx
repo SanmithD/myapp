@@ -20,7 +20,6 @@ function VoiceApp() {
   const [isRecording, setIsRecording] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
-  // Handle new recording saved
   const handleRecordingSaved = async (audioBlob, duration) => {
     const name = `Recording ${allRecordingsCount + 1}`
     await addRecording(name, audioBlob, duration)
@@ -28,35 +27,32 @@ function VoiceApp() {
     setIsRecording(false)
   }
 
-  // Handle delete single recording
   const handleDeleteRecording = (id) => {
     deleteRecording(id)
-    toast.success('Recording deleted')
+    toast.success('Deleted')
   }
 
-  // Handle delete all
   const handleDeleteAll = () => {
     deleteAllRecordings()
     setShowDeleteConfirm(false)
     toast.success('All recordings deleted')
   }
 
-  // Handle rename
   const handleRename = (id, newName) => {
     renameRecording(id, newName)
-    toast.success('Recording renamed')
+    toast.success('Renamed')
   }
 
   return (
     <div className="min-h-screen p-4">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">Voice Recorder</h2>
-        <p className="text-dark-400 text-sm">Record, save, and manage your audio</p>
+        <h2 className="text-2xl font-bold text-white mb-1">Voice Recorder</h2>
+        <p className="text-dark-400 text-sm">Record and save audio</p>
       </div>
 
-      {/* Search Bar */}
-      {!isRecording && (
+      {/* Search */}
+      {!isRecording && allRecordingsCount > 0 && (
         <div className="mb-4">
           <div className="relative">
             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400" />
@@ -65,7 +61,7 @@ function VoiceApp() {
               placeholder="Search recordings..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-10 py-3 bg-dark-800 border border-dark-700 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:border-dark-500 transition-colors"
+              className="w-full pl-10 pr-10 py-3 bg-dark-800 border border-dark-700 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:border-dark-500"
             />
             {searchQuery && (
               <button
@@ -79,7 +75,7 @@ function VoiceApp() {
         </div>
       )}
 
-      {/* Record Button / Recorder */}
+      {/* Recorder or New Recording Button */}
       {isRecording ? (
         <Recorder
           onSave={handleRecordingSaved}
@@ -89,7 +85,7 @@ function VoiceApp() {
         <div className="flex gap-3 mb-6">
           <button
             onClick={() => setIsRecording(true)}
-            className="flex-1 flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-rose-500 to-pink-600 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity"
+            className="flex-1 flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-rose-500 to-pink-600 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity active:scale-[0.98]"
           >
             <Mic size={22} />
             New Recording
@@ -105,7 +101,7 @@ function VoiceApp() {
         </div>
       )}
 
-      {/* Recordings Count */}
+      {/* Count */}
       {!isRecording && (
         <div className="mb-4 text-sm text-dark-400">
           {searchQuery ? (
@@ -125,24 +121,24 @@ function VoiceApp() {
         />
       )}
 
-      {/* Delete All Confirmation Modal */}
+      {/* Delete All Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
           <div className="bg-dark-800 rounded-2xl p-6 w-full max-w-sm border border-dark-700">
-            <h3 className="text-lg font-semibold text-white mb-2">Delete All Recordings?</h3>
+            <h3 className="text-lg font-semibold text-white mb-2">Delete All?</h3>
             <p className="text-dark-400 mb-6">
-              This will permanently delete all {allRecordingsCount} recordings. This action cannot be undone.
+              Delete all {allRecordingsCount} recordings? This cannot be undone.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 py-3 bg-dark-700 text-white rounded-xl hover:bg-dark-600 transition-colors"
+                className="flex-1 py-3 bg-dark-700 text-white rounded-xl hover:bg-dark-600"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteAll}
-                className="flex-1 py-3 bg-red-600 text-white rounded-xl hover:bg-red-500 transition-colors"
+                className="flex-1 py-3 bg-red-600 text-white rounded-xl hover:bg-red-500"
               >
                 Delete All
               </button>
