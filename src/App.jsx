@@ -4,6 +4,7 @@ import Home from './components/Home'
 import Layout from './components/Layout'
 import NotesApp from './components/Notes/NotesApp'
 import VoiceApp from './components/Voice/VoiceApp'
+import DrawPad from './components/Draw/DrawPad'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/notes" element={<NotesApp />} />
         <Route path="/calculator" element={<CalculatorApp />} />
         <Route path="/voice" element={<VoiceApp />} />
+        <Route path="/draw" element={<DrawPad />} />
       </Routes>
     </Layout>
   )
