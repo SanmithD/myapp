@@ -24,6 +24,13 @@ function Home() {
       path: "/voice",
       color: "from-rose-500 to-pink-600",
       description: "Record audio"
+    },
+    {
+      name: "Draw",
+      icon: "draw-logo.jpg",
+      path: "/draw",
+      color: "from-rose-500 to-pink-600",
+      description: "Record audio"
     }
   ]
 
@@ -56,7 +63,7 @@ function Home() {
               <img
                 src={tool.icon}
                 alt={tool.name}
-                className="w-full h-full object-contain group-hover:scale-110 transition"
+                className="w-full h-full rounded object-contain group-hover:scale-110 transition"
               />
             </div>
 
