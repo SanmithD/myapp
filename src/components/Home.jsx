@@ -42,7 +42,7 @@ function Home() {
   ]
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col items-center bg-dark-900 px-6">
+    <div className="h-screen overflow-x-scroll flex flex-col items-center bg-dark-900 px-6">
       {/* Header */}
       <div className="pt-8 text-center">
         <div className="w-28 h-28 mx-auto">
