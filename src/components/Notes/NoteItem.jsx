@@ -1,78 +1,109 @@
-import { Check, Copy, Download, Edit2, MoreVertical, Trash2 } from "lucide-react";
-import { useState } from "react";
-import toast from "react-hot-toast";
+// components/Notes/NoteItem.jsx
+import { Check, Copy, Download, Edit2, Files, MoreVertical, Pin, Share2, Trash2 } from "lucide-react"
+import { useState } from "react"
+import toast from "react-hot-toast"
 
-function NoteItem({ note, onEdit, onDelete }) {
-  const [showActions, setShowActions] = useState(false);
-  const [copied, setCopied] = useState(false);
+function NoteItem({ note, onEdit, onDelete, onTogglePin, onDuplicate, availableTags }) {
+  const [showActions, setShowActions] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = now - date;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const date = new Date(dateString)
+    const now = new Date()
+    const diff = now - date
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
     if (days === 0) {
       return date.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
-      });
+      })
     } else if (days === 1) {
-      return "Yesterday";
+      return "Yesterday"
     } else if (days < 7) {
-      return date.toLocaleDateString([], { weekday: "short" });
+      return date.toLocaleDateString([], { weekday: "short" })
     } else {
-      return date.toLocaleDateString([], { month: "short", day: "numeric" });
+      return date.toLocaleDateString([], { month: "short", day: "numeric" })
     }
-  };
+  }
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(note.content);
-      setCopied(true);
-      toast.success("Copied");
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(note.content)
+      setCopied(true)
+      toast.success("Copied")
+      setTimeout(() => setCopied(false), 2000)
     } catch (err) {
-      console.log(err);
-      toast.error("Copy failed");
+      console.log(err)
+      toast.error("Copy failed")
     }
-  };
+  }
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: note.title,
+          text: note.content,
+        })
+        toast.success("Shared")
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          toast.error("Share failed")
+        }
+      }
+    } else {
+      // Fallback to copy
+      handleCopy()
+    }
+  }
 
   const handleDownload = () => {
     try {
-      const fileContent = `${note.title}\n${"=".repeat(note.title.length)}\n\n${note.content}`;
-      const blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      
-      const link = document.createElement("a");
-      link.href = url;
-      
+      const fileContent = `${note.title}\n${"=".repeat(note.title.length)}\n\n${note.content}`
+      const blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" })
+      const url = URL.createObjectURL(blob)
+
+      const link = document.createElement("a")
+      link.href = url
+
       const sanitizedTitle = note.title
         .replace(/[^a-z0-9]/gi, "_")
         .replace(/_+/g, "_")
-        .substring(0, 50);
-      link.download = `${sanitizedTitle || "note"}.txt`;
-      
-      document.body.appendChild(link);
-      link.click();
-      
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
-      toast.success("Downloaded");
+        .substring(0, 50)
+      link.download = `${sanitizedTitle || "note"}.txt`
+
+      document.body.appendChild(link)
+      link.click()
+
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+
+      toast.success("Downloaded")
     } catch (err) {
-      console.log(err);
-      toast.error("Download failed");
+      console.log(err)
+      toast.error("Download failed")
     }
-  };
+  }
 
   const preview =
     note.content.length > 120
       ? note.content.substring(0, 120) + "..."
-      : note.content;
+      : note.content
+
+  const noteTags = note.tags?.map(tagId => availableTags.find(t => t.id === tagId)).filter(Boolean) || []
 
   return (
-    <div className="relative bg-dark-800 rounded border border-dark-700 hover:border-dark-600 transition-colors p-4 flex flex-col gap-2 w-full">
+    <div className={`relative bg-dark-800 rounded border transition-colors p-4 flex flex-col gap-2 w-full ${
+      note.pinned ? 'border-amber-600/50 bg-dark-800/80' : 'border-dark-700 hover:border-dark-600'
+    }`}>
+      {/* Pinned Indicator */}
+      {note.pinned && (
+        <div className="absolute -top-2 -right-2 bg-amber-600 rounded-full p-1">
+          <Pin size={12} className="text-white" />
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-start justify-between w-full gap-2">
         <button onClick={onEdit} className="flex-1 text-left">
@@ -93,6 +124,20 @@ function NoteItem({ note, onEdit, onDelete }) {
         </button>
       </div>
 
+      {/* Tags */}
+      {noteTags.length > 0 && (
+        <div className="flex items-center gap-1 flex-wrap">
+          {noteTags.map(tag => (
+            <span
+              key={tag.id}
+              className={`inline-flex items-center px-2 py-0.5 rounded text-xs text-white ${tag.color}`}
+            >
+              {tag.name}
+            </span>
+          ))}
+        </div>
+      )}
+
       {/* Content Preview */}
       <button onClick={onEdit} className="text-left">
         <p className="text-sm text-dark-300 leading-relaxed line-clamp-3 whitespace-pre-wrap">
@@ -108,11 +153,22 @@ function NoteItem({ note, onEdit, onDelete }) {
             onClick={() => setShowActions(false)}
           />
 
-          <div className="absolute flex flex-col gap-1 top-12 right-3 z-20 bg-dark-700 border border-dark-600 shadow-lg overflow-hidden min-w-[160px]">
+          <div className="absolute flex flex-col gap-1 top-12 right-3 z-20 bg-dark-700 border border-dark-600 shadow-lg overflow-hidden min-w-[160px] rounded-lg">
             <button
               onClick={() => {
-                handleCopy();
-                setShowActions(false);
+                onTogglePin()
+                setShowActions(false)
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-dark-200 transition"
+            >
+              <Pin size={16} />
+              {note.pinned ? 'Unpin' : 'Pin'}
+            </button>
+
+            <button
+              onClick={() => {
+                handleCopy()
+                setShowActions(false)
               }}
               className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-dark-200 transition"
             >
@@ -122,8 +178,31 @@ function NoteItem({ note, onEdit, onDelete }) {
 
             <button
               onClick={() => {
-                handleDownload();
-                setShowActions(false);
+                handleShare()
+                setShowActions(false)
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-dark-200 transition"
+            >
+              <Share2 size={16} />
+              Share
+            </button>
+
+            <button
+              onClick={() => {
+                onDuplicate()
+                setShowActions(false)
+                toast.success('Note duplicated')
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-dark-200 transition"
+            >
+              <Files size={16} />
+              Duplicate
+            </button>
+
+            <button
+              onClick={() => {
+                handleDownload()
+                setShowActions(false)
               }}
               className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-dark-200 transition"
             >
@@ -133,8 +212,8 @@ function NoteItem({ note, onEdit, onDelete }) {
 
             <button
               onClick={() => {
-                onEdit();
-                setShowActions(false);
+                onEdit()
+                setShowActions(false)
               }}
               className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-dark-200 transition"
             >
@@ -144,8 +223,8 @@ function NoteItem({ note, onEdit, onDelete }) {
 
             <button
               onClick={() => {
-                onDelete();
-                setShowActions(false);
+                onDelete()
+                setShowActions(false)
               }}
               className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-dark-600 text-red-400 transition"
             >
@@ -156,7 +235,7 @@ function NoteItem({ note, onEdit, onDelete }) {
         </>
       )}
     </div>
-  );
+  )
 }
 
-export default NoteItem;
+export default NoteItem

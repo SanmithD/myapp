@@ -1,8 +1,9 @@
+// components/Notes/NotesList.jsx
 import { ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import NoteItem from './NoteItem'
 
-function NotesList({ notes, onEdit, onDelete }) {
+function NotesList({ notes, onEdit, onDelete, onTogglePin, onDuplicate, availableTags }) {
   const [visibleCount, setVisibleCount] = useState(10)
 
   const visibleNotes = notes.slice(0, visibleCount)
@@ -23,13 +24,16 @@ function NotesList({ notes, onEdit, onDelete }) {
   }
 
   return (
-    <div className="space-y-3 flex flex-col gap-2 ">
+    <div className="space-y-3 flex flex-col gap-2">
       {visibleNotes.map(note => (
         <NoteItem
           key={note.id}
           note={note}
           onEdit={() => onEdit(note)}
           onDelete={() => onDelete(note.id)}
+          onTogglePin={() => onTogglePin(note.id)}
+          onDuplicate={() => onDuplicate(note.id)}
+          availableTags={availableTags}
         />
       ))}
 
