@@ -1,11 +1,13 @@
-import { ChevronDown, Clock, Trash2, X } from 'lucide-react'
+import { ChevronDown, Clock, Download, Star, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 
-function History({ history, onSelect, onClear, onClose }) {
+function History({ history, favorites, onSelect, onClear, onClose, onToggleFavorite, onExport }) {
   const [visibleCount, setVisibleCount] = useState(10)
+  const [activeTab, setActiveTab] = useState('all') // 'all' or 'favorites'
 
-  const visibleHistory = history.slice(0, visibleCount)
-  const hasMore = history.length > visibleCount
+  const displayedItems = activeTab === 'favorites' ? favorites : history
+  const visibleHistory = displayedItems.slice(0, visibleCount)
+  const hasMore = displayedItems.length > visibleCount
 
   const formatTime = (timestamp) => {
     const date = new Date(timestamp)
@@ -43,37 +45,79 @@ function History({ history, onSelect, onClear, onClose }) {
     <div className="fixed inset-0 z-50 bg-dark-900/95 backdrop-blur">
       <div className="h-full flex flex-col max-w-lg mx-auto">
         {/* Header */}
-        <div className="flex items-center h-10 justify-between p-4 border-b border-dark-700">
+        <div className="flex items-center h-14 justify-between p-4 border-b border-dark-700">
           <div className="flex items-center gap-2">
             <Clock size={20} className="text-dark-400" />
             <h2 className="text-lg font-semibold text-white">History</h2>
-            <span className="text-sm text-dark-500">({history.length})</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {history.length > 0 && (
-              <button
-                onClick={onClear}
-                className="p-2 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/30 transition-colors"
-              >
-                <Trash2 size={22} />
-              </button>
+              <>
+                <button
+                  onClick={onExport}
+                  className="p-2 rounded-lg bg-dark-700 text-dark-300 hover:text-white transition-colors"
+                  title="Export history"
+                >
+                  <Download size={20} />
+                </button>
+                <button
+                  onClick={onClear}
+                  className="p-2 rounded-lg bg-red-600/20 text-red-400 hover:bg-red-600/30 transition-colors"
+                  title="Clear history"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </>
             )}
             <button
               onClick={onClose}
               className="p-2 rounded-lg bg-dark-700 text-dark-300 hover:text-white transition-colors"
             >
-              <X size={22} />
+              <X size={20} />
             </button>
           </div>
         </div>
 
+        {/* Tabs */}
+        <div className="flex border-b border-dark-700">
+          <button
+            onClick={() => setActiveTab('all')}
+            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+              activeTab === 'all'
+                ? 'text-primary-400 border-b-2 border-primary-400'
+                : 'text-dark-400 hover:text-white'
+            }`}
+          >
+            All ({history.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('favorites')}
+            className={`flex-1 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-1 ${
+              activeTab === 'favorites'
+                ? 'text-yellow-400 border-b-2 border-yellow-400'
+                : 'text-dark-400 hover:text-white'
+            }`}
+          >
+            <Star size={14} />
+            Favorites ({favorites.length})
+          </button>
+        </div>
+
         {/* History List */}
         <div className="flex-1 overflow-y-auto p-4">
-          {history.length === 0 ? (
+          {displayedItems.length === 0 ? (
             <div className="text-center py-16">
-              <div className="text-6xl mb-4">🧮</div>
-              <p className="text-dark-400">No calculations yet</p>
-              <p className="text-dark-500 text-sm mt-1">Your history will appear here</p>
+              <div className="text-6xl mb-4">
+                {activeTab === 'favorites' ? '⭐' : '🧮'}
+              </div>
+              <p className="text-dark-400">
+                {activeTab === 'favorites' ? 'No favorites yet' : 'No calculations yet'}
+              </p>
+              <p className="text-dark-500 text-sm mt-1">
+                {activeTab === 'favorites' 
+                  ? 'Star calculations to save them here' 
+                  : 'Your history will appear here'}
+              </p>
             </div>
           ) : (
             <div className="space-y-6">
@@ -84,38 +128,51 @@ function History({ history, onSelect, onClear, onClose }) {
                   </h3>
                   <div className="space-y-2">
                     {items.map((item) => (
-                      <button
+                      <div
                         key={item.id}
-                        onClick={() => onSelect(item)}
-                        className="w-full text-left p-4 bg-dark-800 rounded border border-dark-700 hover:border-dark-600 transition-colors group"
+                        className="w-full p-4 bg-dark-800 rounded border border-dark-700 hover:border-dark-600 transition-colors group"
                       >
-                        <div className="flex items-center justify-between gap-4">
-                          <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <button
+                            onClick={() => onSelect(item)}
+                            className="flex-1 min-w-0 text-left"
+                          >
                             <p className="text-dark-400 text-sm truncate font-mono">
                               {item.expression}
                             </p>
                             <p className="text-white text-xl font-medium truncate font-mono">
                               = {item.result}
                             </p>
+                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => onToggleFavorite(item)}
+                              className={`p-1 rounded transition-colors ${
+                                item.isFavorite || favorites.find(f => f.id === item.id)
+                                  ? 'text-yellow-400'
+                                  : 'text-dark-500 hover:text-yellow-400'
+                              }`}
+                            >
+                              <Star size={16} fill={item.isFavorite || favorites.find(f => f.id === item.id) ? 'currentColor' : 'none'} />
+                            </button>
+                            <span className="text-xs text-dark-500">
+                              {formatTime(item.timestamp)}
+                            </span>
                           </div>
-                          <span className="text-xs text-dark-500 flex-shrink-0">
-                            {formatTime(item.timestamp)}
-                          </span>
                         </div>
-                      </button>
+                      </div>
                     ))}
                   </div>
                 </div>
               ))}
 
-              {/* Load More */}
               {hasMore && (
                 <button
                   onClick={() => setVisibleCount(prev => prev + 10)}
                   className="w-full py-3 flex items-center justify-center gap-2 bg-dark-800 text-dark-300 rounded-xl hover:bg-dark-700 hover:text-white transition-colors"
                 >
                   <ChevronDown size={18} />
-                  Load More ({history.length - visibleCount} remaining)
+                  Load More ({displayedItems.length - visibleCount} remaining)
                 </button>
               )}
             </div>

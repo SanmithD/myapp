@@ -8,22 +8,56 @@ function Keypad({
   onClear,
   onBackspace,
   onPlusMinus,
+  onMemory,
   showScientific,
+  memory,
 }) {
-  // Scientific buttons
+  // Memory buttons
+  const memoryButtons = [
+    { label: "MC", action: () => onMemory("MC"), disabled: memory === 0 },
+    { label: "MR", action: () => onMemory("MR"), disabled: memory === 0 },
+    { label: "M+", action: () => onMemory("M+") },
+    { label: "M-", action: () => onMemory("M-") },
+    { label: "MS", action: () => onMemory("MS") },
+  ];
+
+  // Scientific buttons - expanded
   const scientificButtons = [
+    // Row 1: Trig functions
     { label: "sin", action: () => onFunction("sin") },
     { label: "cos", action: () => onFunction("cos") },
     { label: "tan", action: () => onFunction("tan") },
     { label: "log", action: () => onFunction("log") },
     { label: "ln", action: () => onFunction("ln") },
+    { label: "ANS", action: () => onFunction("ANS") },
+    // Row 2: Inverse trig & more
+    { label: "sin⁻¹", action: () => onFunction("asin") },
+    { label: "cos⁻¹", action: () => onFunction("acos") },
+    { label: "tan⁻¹", action: () => onFunction("atan") },
     { label: "√", action: () => onFunction("√") },
+    { label: "∛", action: () => onFunction("∛") },
+    { label: "n!", action: () => onFunction("n!") },
+    // Row 3: Powers & constants
+    { label: "x²", action: () => onFunction("x²") },
+    { label: "x³", action: () => onFunction("x³") },
+    { label: "xⁿ", action: () => onFunction("xⁿ") },
+    { label: "10ˣ", action: () => onFunction("10ˣ") },
+    { label: "eˣ", action: () => onFunction("eˣ") },
+    { label: "1/x", action: () => onFunction("1/x") },
+    // Row 4: Constants & parentheses
     { label: "π", action: () => onFunction("π") },
     { label: "e", action: () => onFunction("e") },
-    { label: "x²", action: () => onFunction("x²") },
+    { label: "φ", action: () => onFunction("φ") },
     { label: "^", action: () => onOperator("^") },
     { label: "(", action: () => onFunction("(") },
     { label: ")", action: () => onFunction(")") },
+    // Row 5: Additional functions
+    { label: "abs", action: () => onFunction("abs") },
+    { label: "ceil", action: () => onFunction("ceil") },
+    { label: "floor", action: () => onFunction("floor") },
+    { label: "round", action: () => onFunction("round") },
+    { label: "sinh", action: () => onFunction("sinh") },
+    { label: "cosh", action: () => onFunction("cosh") },
   ];
 
   // Main buttons layout
@@ -50,7 +84,7 @@ function Keypad({
 
     { label: "0", action: () => onNumber("0"), type: "number", wide: true },
     { label: ".", action: () => onNumber("."), type: "number" },
-    { label: "=", action: onEquals, type: "operator" },
+    { label: "=", action: onEquals, type: "equals" },
   ];
 
   const getButtonClass = (type) => {
@@ -59,49 +93,71 @@ function Keypad({
         return "calc-btn calc-btn-number";
       case "operator":
         return "calc-btn calc-btn-operator";
+      case "equals":
+        return "calc-btn bg-primary-600 hover:bg-primary-500 text-white";
       case "function":
         return "calc-btn calc-btn-function";
       case "scientific":
         return "calc-btn calc-btn-scientific";
+      case "memory":
+        return "calc-btn bg-dark-600 hover:bg-dark-500 text-dark-200 text-xs";
       default:
         return "calc-btn calc-btn-number";
     }
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2 px-2 pb-4">
       {/* Scientific Buttons */}
       {showScientific && (
-        <div className="grid grid-cols-6 gap-2 mb-3 animate-in slide-in-from-top duration-200">
-          {scientificButtons.map((btn) => (
-            <button
-              key={btn.label}
-              onClick={btn.action}
-              className={`${getButtonClass("scientific")} h-12`}
-            >
-              {btn.label}
-            </button>
-          ))}
+        <div className="space-y-2 animate-in slide-in-from-top duration-200">
+          {/* Memory Buttons */}
+          <div className="grid grid-cols-5 gap-2">
+            {memoryButtons.map((btn) => (
+              <button
+                key={btn.label}
+                onClick={btn.action}
+                disabled={btn.disabled}
+                className={`${getButtonClass("memory")} h-10 ${
+                  btn.disabled ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Scientific Functions */}
+          <div className="grid grid-cols-6 gap-1.5">
+            {scientificButtons.map((btn) => (
+              <button
+                key={btn.label}
+                onClick={btn.action}
+                className={`${getButtonClass("scientific")} h-10 text-xs`}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
       {/* Backspace Button */}
       <button
         onClick={onBackspace}
-        className="w-full h-12 flex items-center justify-center gap-2 bg-dark-700 hover:bg-dark-600 text-dark-300 rounded-xl transition-colors"
+        className="w-full h-10 flex items-center justify-center gap-2 bg-dark-700 hover:bg-dark-600 text-dark-300 rounded-xl transition-colors"
       >
-        <Delete size={20} />
-        Backspace
+        <Delete size={18} />
+        <span className="text-sm">Backspace</span>
       </button>
+
       {/* Main Keypad */}
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-4 gap-2">
         {mainButtons.map((btn, index) => (
           <button
             key={index}
             onClick={btn.action}
-            className={`${getButtonClass(
-              btn.type
-            )} h-16 sm:h-20 text-xl sm:text-2xl ${
+            className={`${getButtonClass(btn.type)} h-14 sm:h-16 text-lg sm:text-xl ${
               btn.wide ? "col-span-2" : ""
             }`}
           >
@@ -109,6 +165,11 @@ function Keypad({
           </button>
         ))}
       </div>
+
+      {/* Keyboard hint */}
+      <p className="text-center text-xs text-dark-500 mt-2">
+        💡 You can use your keyboard to type calculations
+      </p>
     </div>
   );
 }

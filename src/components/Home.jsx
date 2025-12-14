@@ -30,8 +30,15 @@ function Home() {
       icon: "draw-logo.jpg",
       path: "/draw",
       color: "from-rose-500 to-pink-600",
-      description: "Record audio"
-    }
+      description: "Show Creativity"
+    },
+    {
+      name: "Password Manager",
+      icon: "password-logo.png",
+      path: "/password",
+      color: "from-rose-500 to-pink-600",
+      description: "Save password"
+    },
   ]
 
   return (

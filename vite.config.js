@@ -18,6 +18,7 @@ export default defineConfig({
         "main-logo.png",
         "voice-logo.png",
         "draw-logo.jpg",
+        "password-logo.png",
       ],
 
       manifest: {
@@ -59,6 +60,11 @@ export default defineConfig({
             src: "draw-logo.jpg",
             sizes: "192x192",
             type: "image/jpg",
+          },
+          {
+            src: "password-logo.png",
+            sizes: "192x192",
+            type: "image/png",
           },
         ],
       },
