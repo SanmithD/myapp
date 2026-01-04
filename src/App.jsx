@@ -1,11 +1,13 @@
-import { Route, Routes } from 'react-router-dom'
-import CalculatorApp from './components/Calculator/CalculatorApp'
-import DrawPad from './components/Draw/DrawPad'
-import Home from './components/Home'
-import Layout from './components/Layout'
-import NotesApp from './components/Notes/NotesApp'
-import PasswordHome from './components/PasswordManager/PasswordHome'
-import VoiceApp from './components/Voice/VoiceApp'
+import { Route, Routes } from "react-router-dom";
+import CalculatorApp from "./components/Calculator/CalculatorApp";
+import DrawPad from "./components/Draw/DrawPad";
+import Home from "./components/Home";
+import Layout from "./components/Layout";
+import NotesApp from "./components/Notes/NotesApp";
+import PasswordHome from "./components/PasswordManager/PasswordHome";
+import StockDetails from "./components/StockMonitor/pages/StockDetails";
+import StockList from "./components/StockMonitor/pages/StockList";
+import VoiceApp from "./components/Voice/VoiceApp";
 
 function App() {
   return (
@@ -17,9 +19,11 @@ function App() {
         <Route path="/voice" element={<VoiceApp />} />
         <Route path="/draw" element={<DrawPad />} />
         <Route path="/password" element={<PasswordHome />} />
+        <Route path="/trade" element={<StockList />} />
+        <Route path="/stock/:id" element={<StockDetails />} />
       </Routes>
     </Layout>
-  )
+  );
 }
 
-export default App
+export default App;
