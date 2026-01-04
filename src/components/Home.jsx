@@ -39,6 +39,13 @@ function Home() {
       color: "from-rose-500 to-pink-600",
       description: "Save password"
     },
+    {
+      name: "Trade Monitor",
+      icon: "trade.png",
+      path: "/trade",
+      color: "from-rose-500 to-pink-600",
+      description: "Observe the Trade"
+    },
   ]
 
   return (
