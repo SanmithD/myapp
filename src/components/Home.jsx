@@ -46,6 +46,13 @@ function Home() {
       color: "from-rose-500 to-pink-600",
       description: "Observe the Trade"
     },
+    {
+      name: "Focus",
+      icon: "time.png",
+      path: "/focus",
+      color: "from-rose-500 to-pink-600",
+      description: "Focus onne Goal"
+    },
   ]
 
   return (

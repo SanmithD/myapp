@@ -1,0 +1,161 @@
+/* TimerCard.css */
+.timer-digit {
+  position: relative;
+  width: 6rem;
+  height: 9rem;
+}
+
+@media (min-width: 640px) {
+  .timer-digit {
+    width: 10rem;
+    height: 14rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .timer-digit {
+    width: 12rem;
+    height: 17rem;
+  }
+}
+
+.digit-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.card-top,
+.card-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.card-top {
+  top: 0;
+  background: linear-gradient(to bottom, #1a1a1a, #0d0d0d);
+  border-radius: 0.75rem 0.75rem 0 0;
+  align-items: flex-end;
+  border: 1px solid #2a2a2a;
+  border-bottom: none;
+}
+
+.card-bottom {
+  bottom: 0;
+  background: linear-gradient(to bottom, #080808, #121212);
+  border-radius: 0 0 0.75rem 0.75rem;
+  align-items: flex-start;
+  border: 1px solid #2a2a2a;
+  border-top: none;
+}
+
+.digit-text {
+  font-size: 6rem;
+  font-weight: 200;
+  color: #ffffff;
+  font-family: ui-monospace, 'SF Mono', 'Roboto Mono', monospace;
+  line-height: 1;
+  user-select: none;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 640px) {
+  .digit-text {
+    font-size: 10rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .digit-text {
+    font-size: 12rem;
+  }
+}
+
+.card-top .digit-text {
+  transform: translateY(50%);
+}
+
+.card-bottom .digit-text {
+  transform: translateY(-50%);
+}
+
+.center-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: #000;
+  z-index: 10;
+}
+
+.center-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 1px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Subtle inner shadow */
+.card-top::after,
+.card-bottom::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.card-top::after {
+  background: linear-gradient(to bottom, rgba(255,255,255,0.02), transparent);
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.card-bottom::after {
+  background: linear-gradient(to top, rgba(255,255,255,0.01), transparent);
+  border-radius: 0 0 0.75rem 0.75rem;
+}
+
+/* Flipping animation */
+.timer-digit.flipping .card-top {
+  animation: dimTop 0.15s ease-out forwards;
+}
+
+.timer-digit.flipping .card-bottom {
+  animation: brightBottom 0.15s ease-out forwards;
+}
+
+@keyframes dimTop {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes brightBottom {
+  0% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Glow effect on hover */
+.timer-digit:hover .card-top,
+.timer-digit:hover .card-bottom {
+  border-color: #3a3a3a;
+}

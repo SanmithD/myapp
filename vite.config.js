@@ -19,7 +19,8 @@ export default defineConfig({
         "voice-logo.png",
         "draw-logo.jpg",
         "password-logo.png",
-        "trade.png"
+        "trade.png",
+        "time.png"
       ],
 
       manifest: {
@@ -69,6 +70,11 @@ export default defineConfig({
           },
           {
             src: "trade.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "time.png",
             sizes: "192x192",
             type: "image/png",
           },

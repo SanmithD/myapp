@@ -8,6 +8,7 @@ import PasswordHome from "./components/PasswordManager/PasswordHome";
 import StockDetails from "./components/StockMonitor/pages/StockDetails";
 import StockList from "./components/StockMonitor/pages/StockList";
 import VoiceApp from "./components/Voice/VoiceApp";
+import { FocusTimer } from "./components/Focus/FocusTimer";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/password" element={<PasswordHome />} />
         <Route path="/trade" element={<StockList />} />
         <Route path="/stock/:id" element={<StockDetails />} />
+        <Route path="/focus" element={<FocusTimer />} />
       </Routes>
     </Layout>
   );
