@@ -1,29 +1,38 @@
+import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import CalculatorApp from "./components/Calculator/CalculatorApp";
-import DrawPad from "./components/Draw/DrawPad";
-import Home from "./components/Home";
 import Layout from "./components/Layout";
-import NotesApp from "./components/Notes/NotesApp";
-import PasswordHome from "./components/PasswordManager/PasswordHome";
-import StockDetails from "./components/StockMonitor/pages/StockDetails";
-import StockList from "./components/StockMonitor/pages/StockList";
-import VoiceApp from "./components/Voice/VoiceApp";
-import { FocusTimer } from "./components/Focus/FocusTimer";
+
+// Lazy imports
+const Home = lazy(() => import("./components/Home"));
+const NotesApp = lazy(() => import("./components/Notes/NotesApp"));
+const CalculatorApp = lazy(() => import("./components/Calculator/CalculatorApp"));
+const VoiceApp = lazy(() => import("./components/Voice/VoiceApp"));
+const DrawPad = lazy(() => import("./components/Draw/DrawPad"));
+const PasswordHome = lazy(() => import("./components/PasswordManager/PasswordHome"));
+const StockList = lazy(() => import("./components/StockMonitor/pages/StockList"));
+const StockDetails = lazy(() => import("./components/StockMonitor/pages/StockDetails"));
+const FocusTimer = lazy(() => import("./components/Focus/FocusTimer"));
+const FileHome = lazy(() => import("./components/FileShare/FileHome"));
+const Room = lazy(() => import("./components/FileShare/Room"));
 
 function App() {
   return (
     <Layout>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/notes" element={<NotesApp />} />
-        <Route path="/calculator" element={<CalculatorApp />} />
-        <Route path="/voice" element={<VoiceApp />} />
-        <Route path="/draw" element={<DrawPad />} />
-        <Route path="/password" element={<PasswordHome />} />
-        <Route path="/trade" element={<StockList />} />
-        <Route path="/stock/:id" element={<StockDetails />} />
-        <Route path="/focus" element={<FocusTimer />} />
-      </Routes>
+      <Suspense fallback={<div style={{ padding: 20 }}>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/notes" element={<NotesApp />} />
+          <Route path="/calculator" element={<CalculatorApp />} />
+          <Route path="/voice" element={<VoiceApp />} />
+          <Route path="/draw" element={<DrawPad />} />
+          <Route path="/password" element={<PasswordHome />} />
+          <Route path="/trade" element={<StockList />} />
+          <Route path="/stock/:id" element={<StockDetails />} />
+          <Route path="/focus" element={<FocusTimer />} />
+          <Route path="/file_home" element={<FileHome />} />
+          <Route path="/room/:id" element={<Room />} />
+        </Routes>
+      </Suspense>
     </Layout>
   );
 }

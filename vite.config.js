@@ -1,12 +1,20 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    nodePolyfills({
+      globals: {
+        global: true,
+        process: true,
+        Buffer: true,
+      },
+    }),
     VitePWA({
       registerType: "autoUpdate",
 
@@ -20,7 +28,7 @@ export default defineConfig({
         "draw-logo.jpg",
         "password-logo.png",
         "trade.png",
-        "time.png"
+        "time.png",
       ],
 
       manifest: {
@@ -82,8 +90,20 @@ export default defineConfig({
       },
 
       workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
         globPatterns: ["**/*.{js,css,html,png,svg,ico,json}"],
         navigateFallback: "/index.html",
+      },
+
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              vendor: ["react", "react-dom"],
+              webrtc: ["simple-peer"],
+            },
+          },
+        },
       },
     }),
   ],
