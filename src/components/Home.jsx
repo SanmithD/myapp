@@ -53,6 +53,13 @@ function Home() {
       color: "from-rose-500 to-pink-600",
       description: "Focus onne Goal"
     },
+    {
+      name: "Share",
+      icon: "time.png",
+      path: "/file_home",
+      color: "from-rose-500 to-pink-600",
+      description: "Share Files"
+    },
   ]
 
   return (
@@ -78,7 +85,7 @@ function Home() {
             onClick={() => navigate(tool.path)}
             className="relative flex items-center gap-4 p-3 rounded bg-dark-800 border border-dark-700 group hover:border-dark-500 hover:shadow-lg transition"
           >
-            <div className={`absolute inset-0 bg-gradient-to-br ${tool.color} opacity-0 group-hover:opacity-10 transition`} />
+            <div className={`absolute inset-0 bg-linear-to-br ${tool.color} opacity-0 group-hover:opacity-10 transition`} />
 
             <div className="w-14 h-14 flex items-center justify-center">
               <img
