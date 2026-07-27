@@ -19,7 +19,8 @@
     "react-router-dom": "^7.9.6",
     "recharts": "^3.6.0",
     "simple-peer": "^9.11.1",
-    "vite-plugin-node-polyfills": "^0.26.0"
+    "vite-plugin-node-polyfills": "^0.26.0",
+    "framer-motion": "^11.2.10"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

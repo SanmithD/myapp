@@ -29,6 +29,8 @@ export default defineConfig({
         "password-logo.png",
         "trade.png",
         "time.png",
+        "book.png",
+        "book_reader.png"
       ],
 
       manifest: {
@@ -83,6 +85,16 @@ export default defineConfig({
           },
           {
             src: "time.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "book.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "book_reader.png",
             sizes: "192x192",
             type: "image/png",
           },

@@ -1,0 +1,197 @@
+:root {
+  /* ---- Ancient Wooden Library palette (fixed — no toggler) ---- */
+  --wood-dark: #2b1a10;
+  --wood-mid: #4a2f1c;
+  --wood-light: #6b4530;
+  --leather: #5c2e1e;
+  --coffee: #3c2415;
+  --gold: #c9a24b;
+  --gold-bright: #e0bf72;
+  --paper: #ecdcb4;
+  --paper-shadow: #d8c69a;
+  --paper-burn: #b89a68;
+  --ink: #2c1c10;
+  --ink-soft: #4a3623;
+  --danger: #8c3a2b;
+  --success: #4a6b3c;
+
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Cormorant Garamond', serif;
+  --font-ui: 'Libre Baskerville', serif;
+
+  --radius: 10px;
+  --shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.45);
+  --shadow-deep: 0 14px 40px rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at top, rgba(255, 220, 160, 0.06), transparent 60%),
+    repeating-linear-gradient(
+      90deg,
+      var(--wood-dark) 0px,
+      var(--wood-mid) 4px,
+      var(--wood-dark) 8px
+    ),
+    var(--wood-dark);
+  color: var(--paper);
+  font-family: var(--font-body);
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, textarea {
+  font-family: inherit;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+  color: var(--gold-bright);
+  margin: 0;
+}
+
+a { color: inherit; }
+
+/* Scrollbars styled to match the wood theme */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--wood-dark); }
+::-webkit-scrollbar-thumb { background: var(--wood-light); border-radius: 8px; }
+
+.app-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.wooden-btn {
+  font-family: var(--font-ui);
+  background: linear-gradient(180deg, var(--wood-light), var(--leather));
+  border: 1px solid var(--gold);
+  color: var(--paper);
+  border-radius: var(--radius);
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  touch-action: manipulation;
+  min-height: 44px;
+}
+.wooden-btn:active { transform: scale(0.97); filter: brightness(1.08); }
+.wooden-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.wooden-btn.primary {
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  color: var(--wood-dark);
+  font-weight: 700;
+  border-color: var(--gold-bright);
+}
+.wooden-btn.ghost {
+  background: transparent;
+  box-shadow: none;
+}
+.wooden-btn.danger {
+  background: linear-gradient(180deg, #a14636, var(--danger));
+  border-color: #d17a5f;
+}
+
+.icon-btn {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--gold);
+  color: var(--gold-bright);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.icon-btn:active { transform: scale(0.94); }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.field label {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--gold);
+}
+.field input, .field textarea, .field select {
+  background: rgba(0,0,0,0.28);
+  border: 1px solid var(--wood-light);
+  border-radius: var(--radius);
+  color: var(--paper);
+  padding: 12px;
+  font-size: 1rem;
+  font-family: var(--font-body);
+}
+.field input:focus, .field textarea:focus, .field select:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, rgba(43,26,16,0.97), rgba(43,26,16,0.9));
+  border-bottom: 2px solid var(--gold);
+  backdrop-filter: blur(4px);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.modal-card {
+  background: linear-gradient(180deg, var(--wood-mid), var(--coffee));
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-deep);
+  padding: 24px;
+  width: 100%;
+  max-width: 380px;
+}
+
+@media (max-width: 480px) {
+  .modal-card { padding: 18px; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.2rem; }
+}

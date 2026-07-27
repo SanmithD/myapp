@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 function Home() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const tools = [
     {
@@ -9,101 +9,127 @@ function Home() {
       icon: "logo.png",
       path: "/notes",
       color: "from-amber-500 to-orange-600",
-      description: "Quick notes and ideas"
+      description: "Quick notes and ideas",
     },
     {
       name: "Calculator",
       icon: "log.png",
       path: "/calculator",
       color: "from-blue-500 to-purple-600",
-      description: "Math and calculations"
+      description: "Math and calculations",
     },
     {
       name: "Voice",
       icon: "voice-logo.png",
       path: "/voice",
       color: "from-rose-500 to-pink-600",
-      description: "Record audio"
+      description: "Record audio",
     },
     {
       name: "Draw",
       icon: "draw-logo.jpg",
       path: "/draw",
-      color: "from-rose-500 to-pink-600",
-      description: "Show Creativity"
+      color: "from-emerald-500 to-green-600",
+      description: "Show Creativity",
     },
     {
       name: "Password Manager",
       icon: "password-logo.png",
       path: "/password",
-      color: "from-rose-500 to-pink-600",
-      description: "Save password"
+      color: "from-red-500 to-pink-600",
+      description: "Save passwords securely",
     },
     {
       name: "Trade Monitor",
       icon: "trade.png",
       path: "/trade",
-      color: "from-rose-500 to-pink-600",
-      description: "Observe the Trade"
+      color: "from-cyan-500 to-blue-600",
+      description: "Observe the Trade",
     },
     {
       name: "Focus",
       icon: "time.png",
       path: "/focus",
-      color: "from-rose-500 to-pink-600",
-      description: "Focus onne Goal"
+      color: "from-violet-500 to-purple-600",
+      description: "Focus on one goal",
     },
     {
       name: "Share",
       icon: "time.png",
       path: "/file_home",
-      color: "from-rose-500 to-pink-600",
-      description: "Share Files"
+      color: "from-sky-500 to-cyan-600",
+      description: "Share Files",
     },
-  ]
+    {
+      name: "Books",
+      icon: "book.png",
+      path: "/book_home",
+      color: "from-yellow-600 to-amber-700",
+      description: "Write your thoughts",
+    },
+  ];
 
   return (
-    <div className="h-screen mb-12 flex flex-col items-center bg-dark-900 px-6">
+    <div className="h-screen bg-dark-900 flex flex-col">
       {/* Header */}
-      <div className="pt-8 text-center">
-        <div className="w-28 h-28 mx-auto">
-          <img
-            src="main-logo.png"
-            alt="App Logo"
-            className="w-full h-full object-contain"
-          />
-        </div>
-        <h1 className="text-3xl font-bold text-white mt-2">MyApp</h1>
-        <p className="text-dark-400 text-base">My personal dashboard</p>
-      </div>
+      <header className="flex flex-col items-center px-6 pt-8 pb-6 shrink-0">
+        <img
+          src="main-logo.png"
+          alt="App Logo"
+          className="w-24 h-24 object-contain"
+        />
+
+        <h1 className="mt-3 text-3xl font-bold text-white">
+          MyApp
+        </h1>
+
+        <p className="mt-1 text-dark-400">
+          My Personal Dashboard
+        </p>
+      </header>
 
       {/* Tools */}
-      <div className="flex flex-col justify-center flex-1 gap-6 w-full max-w-sm">
-        {tools.map(tool => (
-          <button
-            key={tool.name}
-            onClick={() => navigate(tool.path)}
-            className="relative flex items-center gap-4 p-3 rounded bg-dark-800 border border-dark-700 group hover:border-dark-500 hover:shadow-lg transition"
-          >
-            <div className={`absolute inset-0 bg-linear-to-br ${tool.color} opacity-0 group-hover:opacity-10 transition`} />
-
-            <div className="w-14 h-14 flex items-center justify-center">
-              <img
-                src={tool.icon}
-                alt={tool.name}
-                className="w-full h-full rounded object-contain group-hover:scale-110 transition"
+      <main className="flex-1 overflow-y-auto px-5 pb-6">
+        <div className="max-w-md mx-auto space-y-4">
+          {tools.map((tool) => (
+            <button
+              key={tool.name}
+              onClick={() => navigate(tool.path)}
+              className="group relative w-full overflow-hidden rounded-xl border border-dark-700 bg-dark-800 p-4 transition-all duration-300 hover:border-dark-500 hover:-translate-y-1 hover:shadow-xl"
+            >
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${tool.color} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
               />
-            </div>
 
-            <div className="flex flex-col text-left">
-              <span className="text-lg font-semibold text-white">{tool.name}</span>
-              <span className="text-sm text-dark-400">{tool.description}</span>
-            </div>
-          </button>
-        ))}
-      </div>
+              <div className="relative flex items-center gap-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-dark-700">
+                  <img
+                    src={tool.icon}
+                    alt={tool.name}
+                    className="h-11 w-11 object-contain transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
+
+                <div className="flex-1 text-left">
+                  <h2 className="text-lg font-semibold text-white">
+                    {tool.name}
+                  </h2>
+
+                  <p className="mt-1 text-sm text-dark-400">
+                    {tool.description}
+                  </p>
+                </div>
+
+                <div className="text-2xl text-dark-500 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white">
+                  →
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </main>
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;
