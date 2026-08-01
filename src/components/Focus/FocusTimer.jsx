@@ -1,10 +1,10 @@
 // FocusTimer.tsx
 import { useFocusTimer } from "../../utils/useFocusTimer";
+import { TimeInput } from "./TimeInput";
 import { TimerCard } from "./TimerCard";
 import { TimerControls } from "./TimerControls";
-import { TimeInput } from "./TimeInput";
 
-export const FocusTimer = () => {
+const FocusTimer = () => {
   const {
     minutes,
     seconds,
@@ -116,3 +116,5 @@ export const FocusTimer = () => {
     </div>
   );
 };
+
+export default FocusTimer;

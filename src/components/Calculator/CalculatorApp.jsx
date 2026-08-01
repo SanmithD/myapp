@@ -16,6 +16,8 @@ import History from "./History";
 import Keypad from "./Keypad";
 import UnitConverter from "./UnitConverter";
 
+const OPERATORS = ["+", "-", "×", "÷", "^", "%"];
+
 function CalculatorApp() {
   // Core state
   const [display, setDisplay] = useState("0");
@@ -72,50 +74,74 @@ function CalculatorApp() {
     }
   }, [display, vibrate]);
 
-  // Handle number input
+  // Handle number/decimal input
+  // Uses `expression`'s trailing character (not `display`) to decide whether
+  // we're starting a fresh number segment — `display` is never mutated with
+  // operator symbols, so it always safely reflects the number being typed.
   const handleNumber = useCallback(
     (num) => {
       vibrate();
+
       if (justCalculated) {
-        setDisplay(num);
-        setExpression(num);
+        const start = num === "." ? "0." : num;
+        setDisplay(start);
+        setExpression(start);
         setJustCalculated(false);
-      } else {
-        if (display === "0" && num !== ".") {
-          setDisplay(num);
-          setExpression((prev) =>
-            prev === "" || prev === "0" ? num : prev + num
-          );
+        return;
+      }
+
+      const lastChar = expression.slice(-1);
+      const startingNewSegment = expression === "" || OPERATORS.includes(lastChar) || lastChar === "(";
+
+      if (num === ".") {
+        // Find the number segment currently being typed at the end of the expression
+        const match = expression.match(/(\d*\.?\d*)$/);
+        const segment = match ? match[0] : "";
+        if (segment.includes(".")) return; // this number already has a decimal point
+
+        if (startingNewSegment) {
+          setDisplay("0.");
+          setExpression((prev) => prev + "0.");
         } else {
-          // Prevent multiple decimals
-          if (num === "." && display.includes(".")) {
-            return;
-          }
-          setDisplay((prev) => prev + num);
-          setExpression((prev) => prev + num);
+          setDisplay((prev) => (prev === "0" ? "0." : prev + "."));
+          setExpression((prev) => prev + ".");
         }
+        return;
+      }
+
+      if (startingNewSegment) {
+        setDisplay(num);
+        setExpression((prev) => prev + num);
+      } else {
+        setDisplay((prev) => (prev === "0" ? num : prev + num));
+        setExpression((prev) => prev + num);
       }
     },
-    [display, justCalculated, vibrate]
+    [expression, justCalculated, vibrate]
   );
 
   // Handle operator input
+  // Note: `display` is intentionally left untouched here — it keeps showing
+  // the last number typed, rather than being overwritten with the operator
+  // symbol (which previously caused things like "+3" to render as the result).
   const handleOperator = useCallback(
     (op) => {
       vibrate();
       setJustCalculated(false);
 
-      const lastChar = expression.slice(-1);
-      const operators = ["+", "-", "×", "÷", "^", "%"];
-
-      if (operators.includes(lastChar)) {
-        setExpression((prev) => prev.slice(0, -1) + op);
-      } else {
-        setExpression((prev) => prev + op);
-      }
-      setDisplay(op);
+      setExpression((prev) => {
+        if (prev === "") {
+          // Allow a leading "-" for negative numbers; ignore other leading operators
+          return op === "-" ? op : prev;
+        }
+        const lastChar = prev.slice(-1);
+        if (OPERATORS.includes(lastChar)) {
+          return prev.slice(0, -1) + op;
+        }
+        return prev + op;
+      });
     },
-    [expression, vibrate]
+    [vibrate]
   );
 
   // Handle function input (sin, cos, etc.)
@@ -211,10 +237,12 @@ function CalculatorApp() {
           setDisplay(lastAnswer);
           break;
         case "rand":
-          { const randomNum = Math.random().toFixed(6);
-          setExpression((prev) => prev + randomNum);
-          setDisplay(randomNum);
-          break; }
+          {
+            const randomNum = Math.random().toFixed(6);
+            setExpression((prev) => prev + randomNum);
+            setDisplay(randomNum);
+            break;
+          }
         default:
           break;
       }
@@ -288,13 +316,11 @@ function CalculatorApp() {
       toast.error("Invalid expression");
       setDisplay("Error");
       setTimeout(() => {
-        if (display === "Error") {
-          setDisplay("0");
-          setExpression("");
-        }
+        setDisplay((prev) => (prev === "Error" ? "0" : prev));
+        setExpression((prev) => (prev === expression ? "" : prev));
       }, 1500);
     }
-  }, [expression, setHistory, angleMode, vibrate, display]);
+  }, [expression, setHistory, angleMode, vibrate]);
 
   // Clear display
   const handleClear = useCallback(() => {
@@ -315,26 +341,35 @@ function CalculatorApp() {
   }, [vibrate]);
 
   // Delete last character
+  // Rebuilds `display` from the trailing number segment of the *new*
+  // expression, instead of blindly slicing the old display string — this
+  // keeps display accurate now that it no longer mirrors operator presses.
   const handleBackspace = useCallback(() => {
     vibrate();
     if (justCalculated) {
       handleClear();
       return;
     }
+    if (!expression) return;
 
-    if (expression.length > 1) {
-      // Check if we need to delete a function name like "sin("
-      const funcMatch = expression.match(/(sin|cos|tan|log|ln|sqrt|abs|ceil|floor|round|asin|acos|atan|sinh|cosh|tanh|cbrt)\($/);
-      if (funcMatch) {
-        setExpression((prev) => prev.slice(0, -funcMatch[0].length));
-        setDisplay("0");
-      } else {
-        setExpression((prev) => prev.slice(0, -1));
-        setDisplay((prev) => (prev.length > 1 ? prev.slice(0, -1) : "0"));
-      }
-    } else {
-      handleClear();
+    const funcMatch = expression.match(
+      /(sin|cos|tan|log10|log|ln|sqrt|cbrt|abs|ceil|floor|round|asin|acos|atan|sinh|cosh|tanh)\($/
+    );
+
+    const newExpression = funcMatch
+      ? expression.slice(0, -funcMatch[0].length)
+      : expression.slice(0, -1);
+
+    setExpression(newExpression);
+
+    if (!newExpression) {
+      setDisplay("0");
+      return;
     }
+
+    const segMatch = newExpression.match(/(\d*\.?\d*)$/);
+    const seg = segMatch ? segMatch[0] : "";
+    setDisplay(seg || newExpression.slice(-1));
   }, [expression, justCalculated, handleClear, vibrate]);
 
   // Toggle positive/negative
@@ -364,7 +399,6 @@ function CalculatorApp() {
       const value = parseFloat(display) / 100;
       setDisplay(value.toString());
       setExpression((prev) => {
-        // Replace last number with percentage value
         const match = prev.match(/[\d.]+$/);
         if (match) {
           return prev.slice(0, -match[0].length) + value.toString();
@@ -441,12 +475,10 @@ function CalculatorApp() {
   // Keyboard support
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Don't capture if user is typing in an input
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
         return;
       }
 
-      // Prevent default for calculator keys
       if (
         /^[0-9+\-*/.=()%^!]$/.test(e.key) ||
         ["Enter", "Backspace", "Escape", "Delete"].includes(e.key)
@@ -454,37 +486,25 @@ function CalculatorApp() {
         e.preventDefault();
       }
 
-      // Numbers
       if (/^[0-9.]$/.test(e.key)) {
         handleNumber(e.key);
-      }
-      // Operators
-      else if (e.key === "+") handleOperator("+");
+      } else if (e.key === "+") handleOperator("+");
       else if (e.key === "-") handleOperator("-");
       else if (e.key === "*") handleOperator("×");
       else if (e.key === "/") handleOperator("÷");
       else if (e.key === "%") handlePercent();
       else if (e.key === "^") handleOperator("^");
-      // Parentheses
       else if (e.key === "(") handleFunction("(");
       else if (e.key === ")") handleFunction(")");
-      // Equals
       else if (e.key === "Enter" || e.key === "=") handleEquals();
-      // Clear
       else if (e.key === "Escape") handleClear();
-      // Backspace
       else if (e.key === "Backspace" || e.key === "Delete") handleBackspace();
-      // Copy result with Ctrl/Cmd + C
       else if (e.key === "c" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
         handleCopy();
-      }
-      // Toggle scientific with 's'
-      else if (e.key === "s" && !e.ctrlKey && !e.metaKey) {
+      } else if (e.key === "s" && !e.ctrlKey && !e.metaKey) {
         setShowScientific((prev) => !prev);
-      }
-      // History with 'h'
-      else if (e.key === "h" && !e.ctrlKey && !e.metaKey) {
+      } else if (e.key === "h" && !e.ctrlKey && !e.metaKey) {
         setShowHistory((prev) => !prev);
       }
     };
@@ -503,129 +523,131 @@ function CalculatorApp() {
   ]);
 
   return (
-    <div className="h-screen flex flex-col pt-14 pb-6">
-      {/* Display - Fixed at top */}
-      <div className="fixed w-full flex flex-col gap-2 px-2 pt-2 bg-dark-900/95 backdrop-blur-sm z-10">
-        <Display
-          expression={expression}
-          result={display}
-          preview={preview}
-          angleMode={angleMode}
-          memory={memory}
-        />
+    // 100dvh (not 100vh) avoids content being hidden behind mobile browser
+    // toolbars that shrink/grow the viewport. Outer flex centers the app on
+    // wide screens (tablet/desktop) instead of letting it stretch full-width.
+    <div className="h-[100dvh] w-full bg-dark-900 flex justify-center overflow-hidden">
+      <div className="relative w-full max-w-lg h-full flex flex-col overflow-y-auto">
+        {/* Display - natural flow, not `fixed`, so it never overflows the
+            centered max-w-lg column on large screens */}
+        <div className="shrink-0 flex flex-col gap-2 px-3 sm:px-4 pt-3 bg-dark-900/95 backdrop-blur-sm">
+          <Display
+            expression={expression}
+            result={display}
+            preview={preview}
+            angleMode={angleMode}
+            memory={memory}
+          />
 
-        {/* Action buttons row */}
-        <div className="flex gap-2">
-          {/* History button */}
-          <button
-            onClick={() => setShowHistory(true)}
-            className="flex-1 flex items-center justify-center h-10 gap-2 bg-dark-800 text-dark-300 rounded-lg hover:bg-dark-700 hover:text-white transition-colors border border-dark-700"
-          >
-            <HistoryIcon size={18} />
-            <span className="text-sm">History ({history.length})</span>
-          </button>
-
-          {/* Copy button */}
-          <button
-            onClick={handleCopy}
-            disabled={display === "0" || display === "Error"}
-            className="flex items-center justify-center h-10 w-10 bg-dark-800 text-dark-300 rounded-lg hover:bg-dark-700 hover:text-white transition-colors border border-dark-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Copy result (Ctrl+C)"
-          >
-            {copied ? (
-              <Check size={18} className="text-green-400" />
-            ) : (
-              <Copy size={18} />
-            )}
-          </button>
-
-          {/* Unit converter button */}
-          <button
-            onClick={() => setShowConverter(true)}
-            className="flex items-center justify-center h-10 px-3 gap-2 bg-dark-800 text-dark-300 rounded-lg hover:bg-dark-700 hover:text-white transition-colors border border-dark-700"
-            title="Unit converter"
-          >
-            <ArrowLeftRight size={18} />
-            <span className="text-sm hidden sm:inline">Convert</span>
-          </button>
-        </div>
-
-        {/* Angle mode toggle */}
-        <div className="flex gap-2 items-center">
-          <span className="text-xs text-dark-500">Angle:</span>
-          <div className="flex rounded-lg overflow-hidden border border-dark-700">
+          {/* Action buttons row */}
+          <div className="flex gap-2">
             <button
-              onClick={() => setAngleMode("deg")}
-              className={`px-3 py-1 text-xs transition-colors ${
-                angleMode === "deg"
-                  ? "bg-primary-600 text-white"
-                  : "bg-dark-800 text-dark-400 hover:bg-dark-700 hover:text-white"
-              }`}
+              onClick={() => setShowHistory(true)}
+              className="flex-1 flex items-center justify-center h-10 gap-2 bg-dark-800 text-dark-300 rounded-lg hover:bg-dark-700 hover:text-white transition-colors border border-dark-700"
             >
-              DEG
+              <HistoryIcon size={18} />
+              <span className="text-sm">History ({history.length})</span>
             </button>
+
             <button
-              onClick={() => setAngleMode("rad")}
-              className={`px-3 py-1 text-xs transition-colors ${
-                angleMode === "rad"
-                  ? "bg-primary-600 text-white"
-                  : "bg-dark-800 text-dark-400 hover:bg-dark-700 hover:text-white"
-              }`}
+              onClick={handleCopy}
+              disabled={display === "0" || display === "Error"}
+              className="flex items-center justify-center h-10 w-10 bg-dark-800 text-dark-300 rounded-lg hover:bg-dark-700 hover:text-white transition-colors border border-dark-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Copy result (Ctrl+C)"
             >
-              RAD
+              {copied ? (
+                <Check size={18} className="text-green-400" />
+              ) : (
+                <Copy size={18} />
+              )}
+            </button>
+
+            <button
+              onClick={() => setShowConverter(true)}
+              className="flex items-center justify-center h-10 px-3 gap-2 bg-dark-800 text-dark-300 rounded-lg hover:bg-dark-700 hover:text-white transition-colors border border-dark-700"
+              title="Unit converter"
+            >
+              <ArrowLeftRight size={18} />
+              <span className="text-sm hidden sm:inline">Convert</span>
             </button>
           </div>
 
-          {/* Memory indicator */}
-          {memory !== 0 && (
-            <button
-              onClick={() => handleMemory("MR")}
-              className="ml-auto px-2 py-1 text-xs bg-yellow-600/20 text-yellow-400 rounded hover:bg-yellow-600/30 transition-colors"
-              title="Click to recall memory"
-            >
-              M: {memory}
-            </button>
-          )}
+          {/* Angle mode toggle */}
+          <div className="flex gap-2 items-center pb-2">
+            <span className="text-xs text-dark-500">Angle:</span>
+            <div className="flex rounded-lg overflow-hidden border border-dark-700">
+              <button
+                onClick={() => setAngleMode("deg")}
+                className={`px-3 py-1 text-xs transition-colors ${
+                  angleMode === "deg"
+                    ? "bg-primary-600 text-white"
+                    : "bg-dark-800 text-dark-400 hover:bg-dark-700 hover:text-white"
+                }`}
+              >
+                DEG
+              </button>
+              <button
+                onClick={() => setAngleMode("rad")}
+                className={`px-3 py-1 text-xs transition-colors ${
+                  angleMode === "rad"
+                    ? "bg-primary-600 text-white"
+                    : "bg-dark-800 text-dark-400 hover:bg-dark-700 hover:text-white"
+                }`}
+              >
+                RAD
+              </button>
+            </div>
 
-          {/* Keyboard hint */}
-          <span className="ml-auto text-xs text-dark-600 hidden sm:inline">
-            ⌨️ Keyboard enabled
-          </span>
+            {memory !== 0 && (
+              <button
+                onClick={() => handleMemory("MR")}
+                className="ml-auto px-2 py-1 text-xs bg-yellow-600/20 text-yellow-400 rounded hover:bg-yellow-600/30 transition-colors"
+                title="Click to recall memory"
+              >
+                M: {memory}
+              </button>
+            )}
+
+            <span className="ml-auto text-xs text-dark-600 hidden md:inline">
+              ⌨️ Keyboard enabled
+            </span>
+          </div>
+        </div>
+
+        {/* Flexible gap — collapses naturally on short screens instead of
+            causing header/keypad to overlap, which `fixed` positioning risked */}
+        <div className="flex-1 min-h-2" />
+
+        {/* Keypad section - natural flow, shrink-0 keeps its own height,
+            overflow-y-auto is a safety net if scientific mode + a short
+            viewport ever combine to need more room than available */}
+        <div className="shrink-0 space-y-2 bg-dark-900/95 backdrop-blur-sm px-3 sm:px-4 pb-3 sm:pb-4 pt-2">
+          <button
+            onClick={() => setShowScientific(!showScientific)}
+            className="w-full flex items-center justify-center gap-2 py-2 text-sm text-dark-400 hover:text-white transition-colors"
+          >
+            {showScientific ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            {showScientific ? "Hide" : "Show"} Scientific (S)
+          </button>
+
+          <Keypad
+            onNumber={handleNumber}
+            onOperator={handleOperator}
+            onFunction={handleFunction}
+            onEquals={handleEquals}
+            onClear={handleClear}
+            onAllClear={handleAllClear}
+            onBackspace={handleBackspace}
+            onPlusMinus={handlePlusMinus}
+            onPercent={handlePercent}
+            onMemory={handleMemory}
+            showScientific={showScientific}
+            memory={memory}
+          />
         </div>
       </div>
 
-      {/* Spacer to push keypad down */}
-      <div className="flex-1 min-h-[180px]" />
-
-      {/* Bottom Section - Keypad and controls */}
-      <div className="space-y-2 fixed w-full bottom-0 left-0 right-0 bg-dark-900/95 backdrop-blur-sm px-2 pb-4 pt-2">
-        {/* Scientific Toggle */}
-        <button
-          onClick={() => setShowScientific(!showScientific)}
-          className="w-full flex items-center justify-center gap-2 py-2 text-sm text-dark-400 hover:text-white transition-colors"
-        >
-          {showScientific ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          {showScientific ? "Hide" : "Show"} Scientific (S)
-        </button>
-
-        {/* Keypad */}
-        <Keypad
-          onNumber={handleNumber}
-          onOperator={handleOperator}
-          onFunction={handleFunction}
-          onEquals={handleEquals}
-          onClear={handleClear}
-          onAllClear={handleAllClear}
-          onBackspace={handleBackspace}
-          onPlusMinus={handlePlusMinus}
-          onPercent={handlePercent}
-          onMemory={handleMemory}
-          showScientific={showScientific}
-          memory={memory}
-        />
-      </div>
-
-      {/* History Panel */}
+      {/* Modals stay full-viewport `fixed` overlays — that's correct as-is */}
       {showHistory && (
         <History
           history={history}
@@ -639,7 +661,6 @@ function CalculatorApp() {
         />
       )}
 
-      {/* Unit Converter */}
       {showConverter && (
         <UnitConverter
           initialValue={display !== "Error" ? display : "0"}

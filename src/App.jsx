@@ -1,7 +1,9 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import Layout from "./components/Layout";
 import MyBook from "./components/ancient-book-writer/src/App";
+import Layout from "./components/Layout";
+import TasksDashboard from "./components/TaskManager/pages/TasksDashboard";
+import TasksHome from "./components/TaskManager/pages/TasksHome";
 
 // Lazy imports
 const Home = lazy(() => import("./components/Home"));
@@ -29,10 +31,12 @@ function App() {
           <Route path="/password" element={<PasswordHome />} />
           <Route path="/trade" element={<StockList />} />
           <Route path="/stock/:id" element={<StockDetails />} />
-          <Route path="/focus" element={<FocusTimer />} />
+          <Route path="/focus_timer" element={<FocusTimer />} />
           <Route path="/file_home" element={<FileHome />} />
           <Route path="/room/:id" element={<Room />} />
           <Route path="/book_home/*" element={<MyBook />} />
+          <Route path="/tasks" element={<TasksHome />} />
+          <Route path="/tasks/dashboard" element={<TasksDashboard />} />
         </Routes>
       </Suspense>
     </Layout>
