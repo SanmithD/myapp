@@ -26,11 +26,11 @@ function Home() {
       description: "Record audio",
     },
     {
-      name: "Draw",
-      icon: "draw-logo.jpg",
-      path: "/draw",
-      color: "from-emerald-500 to-green-600",
-      description: "Show Creativity",
+      name: "Tasks",
+      icon: "password-logo.png",
+      path: "/tasks",
+      color: "from-purple-500 to-indigo-600",
+      description: "Manage your daily tasks",
     },
     {
       name: "Password Manager",
@@ -40,25 +40,11 @@ function Home() {
       description: "Save passwords securely",
     },
     {
-      name: "Trade Monitor",
-      icon: "trade.png",
-      path: "/trade",
-      color: "from-cyan-500 to-blue-600",
-      description: "Observe the Trade",
-    },
-    {
-      name: "Focus",
-      icon: "time.png",
-      path: "/focus",
-      color: "from-violet-500 to-purple-600",
-      description: "Focus on one goal",
-    },
-    {
-      name: "Share",
-      icon: "time.png",
-      path: "/file_home",
-      color: "from-sky-500 to-cyan-600",
-      description: "Share Files",
+      name: "Draw",
+      icon: "draw-logo.jpg",
+      path: "/draw",
+      color: "from-emerald-500 to-green-600",
+      description: "Show Creativity",
     },
     {
       name: "Books",
@@ -66,6 +52,27 @@ function Home() {
       path: "/book_home",
       color: "from-yellow-600 to-amber-700",
       description: "Write your thoughts",
+    },
+    {
+      name: "Focus",
+      icon: "time.png",
+      path: "/focus_timer",
+      color: "from-violet-500 to-purple-600",
+      description: "Focus on one goal",
+    },
+    // {
+    //   name: "Share",
+    //   icon: "time.png",
+    //   path: "/file_home",
+    //   color: "from-sky-500 to-cyan-600",
+    //   description: "Share Files",
+    // },
+    {
+      name: "Trade Monitor",
+      icon: "trade.png",
+      path: "/trade",
+      color: "from-cyan-500 to-blue-600",
+      description: "Observe the Trade",
     },
   ];
 
@@ -79,13 +86,9 @@ function Home() {
           className="w-24 h-24 object-contain"
         />
 
-        <h1 className="mt-3 text-3xl font-bold text-white">
-          MyApp
-        </h1>
+        <h1 className="mt-3 text-3xl font-bold text-white">MyApp</h1>
 
-        <p className="mt-1 text-dark-400">
-          My Personal Dashboard
-        </p>
+        <p className="mt-1 text-dark-400">My Personal Dashboard</p>
       </header>
 
       {/* Tools */}
@@ -98,15 +101,15 @@ function Home() {
               className="group relative w-full overflow-hidden rounded-xl border border-dark-700 bg-dark-800 p-4 transition-all duration-300 hover:border-dark-500 hover:-translate-y-1 hover:shadow-xl"
             >
               <div
-                className={`absolute inset-0 bg-gradient-to-br ${tool.color} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
+                className={`absolute inset-0 bg-linear-to-br ${tool.color} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
               />
 
               <div className="relative flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-dark-700">
+                <div className="flex items-center justify-center rounded-lg bg-dark-700">
                   <img
                     src={tool.icon}
                     alt={tool.name}
-                    className="h-11 w-11 object-contain transition-transform duration-300 group-hover:scale-110"
+                    className="h-11 w-11 rounded-md object-contain transition-transform duration-300 group-hover:scale-110"
                   />
                 </div>
 

@@ -13,7 +13,7 @@ function Layout({ children }) {
         <header className="fixed w-full justify-between top-0 z-50 h-12 flex items-center bg-dark-800/95 backdrop-blur border-b border-dark-700">
           <div className="w-full mx-auto p-2 py-3 flex justify-between items-center gap-4">
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate(-1)}
               className="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors"
             >
               <ArrowLeft size={20} />

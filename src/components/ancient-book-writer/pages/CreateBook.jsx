@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
-import { motion, AnimatePresence } from 'framer-motion';
-import { BookService } from '../services/BookService';
+import { AnimatePresence, motion } from 'framer-motion';
 import Toolbar from '../components/Toolbar';
+import { BookService } from '../services/BookService';
 import { BOOK_BASE } from '../src/basePath';
 
 const STEPS = ['Title', 'Description', 'Cover', 'Create'];
@@ -119,7 +119,7 @@ export default function CreateBook() {
           </motion.div>
         </AnimatePresence>
 
-        <div style={{ display: 'flex', gap: 10, paddingTop: 20, paddingBottom: 20 }}>
+        <div style={{ display: 'flex', gap: 10, paddingBottom: 20 }}>
           <button className="wooden-btn ghost" style={{ flex: 1 }} onClick={back}>
             Back
           </button>

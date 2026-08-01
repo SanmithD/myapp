@@ -17,7 +17,12 @@ export default defineConfig({
     }),
     VitePWA({
       registerType: "autoUpdate",
+      // Ensures the service worker takes control immediately on install/update,
+      // instead of waiting for a page reload — helps first-load offline reliability.
+      injectRegister: "auto",
 
+      // Everything the app needs cached for offline use, INCLUDING all feature icons.
+      // This is separate from manifest.icons below — this just controls precaching.
       includeAssets: [
         "favicon.ico",
         "robots.txt",
@@ -30,7 +35,7 @@ export default defineConfig({
         "trade.png",
         "time.png",
         "book.png",
-        "book_reader.png"
+        "book_reader.png",
       ],
 
       manifest: {
@@ -41,82 +46,69 @@ export default defineConfig({
         display: "standalone",
         description: "Offline React App",
         theme_color: "#000000",
+        background_color: "#000000",
 
+        // ONLY the app logo goes here — this is what shows as the installed
+        // app icon on home screens / app drawers / taskbars.
+        // Feature-specific icons (trade, time, book, voice, draw, password, etc.)
+        // must NOT be listed here or the OS may pick one of them instead.
         icons: [
+          {
+            src: "main-logo.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any",
+          },
           {
             src: "main-logo.png",
             sizes: "512x512",
             type: "image/png",
+            purpose: "any",
           },
           {
             src: "main-logo.png",
-            sizes: "192x192",
+            sizes: "512x512",
             type: "image/png",
-          },
-          {
-            src: "logo.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "log.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "voice-logo.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "draw-logo.jpg",
-            sizes: "192x192",
-            type: "image/jpg",
-          },
-          {
-            src: "password-logo.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "trade.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "time.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "book.png",
-            sizes: "192x192",
-            type: "image/png",
-          },
-          {
-            src: "book_reader.png",
-            sizes: "192x192",
-            type: "image/png",
+            purpose: "maskable",
           },
         ],
       },
 
       workbox: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
-        globPatterns: ["**/*.{js,css,html,png,svg,ico,json}"],
+        // Explicitly include all image extensions used by your feature icons
+        // (jpg was missing before, which would've silently excluded draw-logo.jpg)
+        globPatterns: ["**/*.{js,css,html,png,jpg,jpeg,svg,ico,json,woff,woff2}"],
         navigateFallback: "/index.html",
-      },
-
-      build: {
-        rollupOptions: {
-          output: {
-            manualChunks: {
-              vendor: ["react", "react-dom"],
-              webrtc: ["simple-peer"],
+        // Don't let the SPA fallback swallow requests for the icon files themselves
+        navigateFallbackDenylist: [/^\/(main-logo|logo|log|voice-logo|draw-logo|password-logo|trade|time|book|book_reader)\.(png|jpg)$/],
+        runtimeCaching: [
+          {
+            // Cache-first for images so they load instantly offline after first visit
+            urlPattern: ({ request }) => request.destination === "image",
+            handler: "CacheFirst",
+            options: {
+              cacheName: "images-cache",
+              expiration: {
+                maxEntries: 60,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
             },
           },
-        },
+        ],
       },
     }),
   ],
+
+  // Correct placement: build config is a top-level key, not inside VitePWA.
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+          webrtc: ["simple-peer"],
+        },
+      },
+    },
+  },
 });
