@@ -27,7 +27,7 @@ function Home() {
     },
     {
       name: "Tasks",
-      icon: "password-logo.png",
+      icon: "task.png",
       path: "/tasks",
       color: "from-purple-500 to-indigo-600",
       description: "Manage your daily tasks",
