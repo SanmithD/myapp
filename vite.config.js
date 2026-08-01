@@ -36,6 +36,7 @@ export default defineConfig({
         "time.png",
         "book.png",
         "book_reader.png",
+        "task.png"
       ],
 
       manifest: {
@@ -81,7 +82,7 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,png,jpg,jpeg,svg,ico,json,woff,woff2}"],
         navigateFallback: "/index.html",
         // Don't let the SPA fallback swallow requests for the icon files themselves
-        navigateFallbackDenylist: [/^\/(main-logo|logo|log|voice-logo|draw-logo|password-logo|trade|time|book|book_reader)\.(png|jpg)$/],
+        navigateFallbackDenylist: [/^\/(main-logo|logo|log|voice-logo|draw-logo|password-logo|trade|time|book|book_reader|task)\.(png|jpg)$/],
         runtimeCaching: [
           {
             // Cache-first for images so they load instantly offline after first visit
