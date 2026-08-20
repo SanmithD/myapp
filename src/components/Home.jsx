@@ -40,6 +40,13 @@ function Home() {
       description: "Save passwords securely",
     },
     {
+      name: "Step Counter",
+      icon: "password-logo.png",
+      path: "/step_counter",
+      color: "from-red-500 to-pink-600",
+      description: "Save passwords securely",
+    },
+    {
       name: "Draw",
       icon: "draw-logo.jpg",
       path: "/draw",

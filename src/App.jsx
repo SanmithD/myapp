@@ -17,6 +17,7 @@ const StockDetails = lazy(() => import("./components/StockMonitor/pages/StockDet
 const FocusTimer = lazy(() => import("./components/Focus/FocusTimer"));
 const FileHome = lazy(() => import("./components/FileShare/FileHome"));
 const Room = lazy(() => import("./components/FileShare/Room"));
+const StepCounter = lazy(() => import("./components/StepCounter/StepCounter"));
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/book_home/*" element={<MyBook />} />
           <Route path="/tasks" element={<TasksHome />} />
           <Route path="/tasks/dashboard" element={<TasksDashboard />} />
+          <Route path="/step_counter" element={<StepCounter />} />
         </Routes>
       </Suspense>
     </Layout>
