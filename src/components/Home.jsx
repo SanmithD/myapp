@@ -41,7 +41,7 @@ function Home() {
     },
     {
       name: "Step Counter",
-      icon: "password-logo.png",
+      icon: "step_img.png",
       path: "/step_counter",
       color: "from-red-500 to-pink-600",
       description: "Save passwords securely",
