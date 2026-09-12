@@ -40,13 +40,6 @@ function Home() {
       description: "Save passwords securely",
     },
     {
-      name: "Step Counter",
-      icon: "step_img.png",
-      path: "/step_counter",
-      color: "from-red-500 to-pink-600",
-      description: "Save passwords securely",
-    },
-    {
       name: "Draw",
       icon: "draw-logo.jpg",
       path: "/draw",
@@ -66,20 +59,6 @@ function Home() {
       path: "/focus_timer",
       color: "from-violet-500 to-purple-600",
       description: "Focus on one goal",
-    },
-    // {
-    //   name: "Share",
-    //   icon: "time.png",
-    //   path: "/file_home",
-    //   color: "from-sky-500 to-cyan-600",
-    //   description: "Share Files",
-    // },
-    {
-      name: "Trade Monitor",
-      icon: "trade.png",
-      path: "/trade",
-      color: "from-cyan-500 to-blue-600",
-      description: "Observe the Trade",
     },
   ];
 

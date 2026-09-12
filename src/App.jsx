@@ -12,12 +12,7 @@ const CalculatorApp = lazy(() => import("./components/Calculator/CalculatorApp")
 const VoiceApp = lazy(() => import("./components/Voice/VoiceApp"));
 const DrawPad = lazy(() => import("./components/Draw/DrawPad"));
 const PasswordHome = lazy(() => import("./components/PasswordManager/PasswordHome"));
-const StockList = lazy(() => import("./components/StockMonitor/pages/StockList"));
-const StockDetails = lazy(() => import("./components/StockMonitor/pages/StockDetails"));
 const FocusTimer = lazy(() => import("./components/Focus/FocusTimer"));
-const FileHome = lazy(() => import("./components/FileShare/FileHome"));
-const Room = lazy(() => import("./components/FileShare/Room"));
-const StepCounter = lazy(() => import("./components/StepCounter/StepCounter"));
 
 function App() {
   return (
@@ -30,15 +25,10 @@ function App() {
           <Route path="/voice" element={<VoiceApp />} />
           <Route path="/draw" element={<DrawPad />} />
           <Route path="/password" element={<PasswordHome />} />
-          <Route path="/trade" element={<StockList />} />
-          <Route path="/stock/:id" element={<StockDetails />} />
           <Route path="/focus_timer" element={<FocusTimer />} />
-          <Route path="/file_home" element={<FileHome />} />
-          <Route path="/room/:id" element={<Room />} />
           <Route path="/book_home/*" element={<MyBook />} />
           <Route path="/tasks" element={<TasksHome />} />
           <Route path="/tasks/dashboard" element={<TasksDashboard />} />
-          <Route path="/step_counter" element={<StepCounter />} />
         </Routes>
       </Suspense>
     </Layout>
